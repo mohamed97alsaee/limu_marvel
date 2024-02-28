@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:limu_marvel/helpers/consts.dart';
+import 'package:limu_marvel/providers/auth_provider.dart';
+import 'package:limu_marvel/providers/movies_provider.dart';
 import 'package:limu_marvel/screens/home_screen.dart';
 import 'package:limu_marvel/screens/login_screen.dart';
 import 'package:limu_marvel/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -15,14 +18,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
-        textTheme: GoogleFonts.poppinsTextTheme(),
-        useMaterial3: false,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => MoviesProvider())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: primaryColor),
+                borderRadius: BorderRadius.circular(16)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+          textTheme: GoogleFonts.poppinsTextTheme(),
+          useMaterial3: false,
+        ),
+        home: const SplashScreen(),
       ),
-      home: const SplashScreen(),
     );
   }
 }
@@ -61,6 +76,6 @@ class _ScreenRouterState extends State<ScreenRouter> {
 
   @override
   Widget build(BuildContext context) {
-    return haveToken ?const HomeScreen() : const LoginScreen();
+    return haveToken ? const HomeScreen() : const LoginScreen();
   }
 }
